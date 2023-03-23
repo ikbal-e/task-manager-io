@@ -41,6 +41,7 @@ public class AuthService : IAuthService
 
         user.RefreshToken = refreshToken;
         user.RefreshTokenEndsAt = DateTime.UtcNow.AddDays(1);
+        await _context.SaveChangesAsync();
 
         return new LoginResponseDto()
         {
@@ -118,5 +119,56 @@ public class AuthService : IAuthService
         var refreshToken = Convert.ToBase64String(randomNumber);
 
         return refreshToken;
+    }
+
+    public async Task<OneOf<LoginResponseDto, NotFoundError>> RefreshTokenAsync(string refreshToken, string expiredAccessToken)
+    {
+        var tokenValidationResut = GetUserIdFromExpiredToken(expiredAccessToken);
+
+        if (tokenValidationResut.TryPickT1(out var error,out var userIdFromToken))
+        {
+            return new NotFoundError(error.Message);
+        }
+        var userId = userIdFromToken;
+
+        var user = await _context.Users
+            .Where(x => x.Id == userId && x.RefreshToken == refreshToken && x.RefreshTokenEndsAt >= DateTime.UtcNow)
+            .FirstOrDefaultAsync();
+        if (user is null) return new NotFoundError("Not found");
+
+        (string accessToken, DateTime expiresAt) = CreateAccessToken(user);
+        var newRefreshToken = CreateRefreshToken();
+
+        user.RefreshToken = newRefreshToken;
+        user.RefreshTokenEndsAt = DateTime.UtcNow.AddDays(1);
+        await _context.SaveChangesAsync();
+
+        return new LoginResponseDto()
+        {
+            AccessToken = accessToken,
+            RefreshToken = newRefreshToken,
+            Username = user.Username,
+            ExpiresAt = expiresAt
+        };
+    }
+
+    private OneOf<int, NotFoundError> GetUserIdFromExpiredToken(string token)
+    {
+        var tokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateAudience = false,
+            ValidateIssuer = false,
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Key"])),
+            ValidateLifetime = false
+        };
+
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var claims = tokenHandler.ValidateToken(token, tokenValidationParameters, out SecurityToken securityToken);
+        var userId = claims.FindFirst(x => x.Type == "id")?.Value;
+
+        return string.IsNullOrEmpty(userId)
+            ? new NotFoundError("User not found")
+            : int.Parse(userId);
     }
 }

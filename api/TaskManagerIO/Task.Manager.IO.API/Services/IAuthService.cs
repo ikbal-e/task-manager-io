@@ -9,5 +9,7 @@ public interface IAuthService
 {
     Task<OneOf<LoginResponseDto, NotFoundError>> LoginAsync(LoginParameters loginParameters);
     Task RegisterAsync(RegisterParameters registerParameters);
+    Task<OneOf<LoginResponseDto, NotFoundError>> RefreshTokenAsync(string refreshToken, string expiredAccessToken);
+
 }
 
