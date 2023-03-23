@@ -123,7 +123,7 @@ public class AuthService : IAuthService
 
     public async Task<OneOf<LoginResponseDto, NotFoundError>> RefreshTokenAsync(string refreshToken, string expiredAccessToken)
     {
-        var tokenValidationResut = GetUserIdFromExpiredToken(expiredAccessToken);
+       var tokenValidationResut = GetUserIdFromExpiredToken(expiredAccessToken);
 
         if (tokenValidationResut.TryPickT1(out var error,out var userIdFromToken))
         {
@@ -170,5 +170,27 @@ public class AuthService : IAuthService
         return string.IsNullOrEmpty(userId)
             ? new NotFoundError("User not found")
             : int.Parse(userId);
+    }
+
+    public async Task<OneOf<OperationSucceeded, NotFoundError>> ChangePassword(int userId, string oldPassword, string newPassword)
+    {
+        var user = await _context.Users.Where(x => x.Id == userId).FirstOrDefaultAsync();
+        if (user is null) return new NotFoundError("Not found");
+
+        var salt = Convert.FromBase64String(user.Salt);
+        string hashed = Convert.ToBase64String(ComputeteHash(oldPassword, salt));
+
+        if (hashed != user.Password) return new NotFoundError("Not Found"); //TODO: 
+
+        var newSaltBytes = RandomNumberGenerator.GetBytes(128 / 8);
+        var newSaltBase64 = Convert.ToBase64String(newSaltBytes);
+        string hashedNewPassword = Convert.ToBase64String(ComputeteHash(newPassword, newSaltBytes));
+
+        user.Password = hashedNewPassword;
+        user.Salt = newSaltBase64;
+
+        await _context.SaveChangesAsync();
+
+        return new OperationSucceeded("Password Changed");
     }
 }

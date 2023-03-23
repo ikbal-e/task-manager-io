@@ -2,27 +2,33 @@ import React from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { decrement, increment, incrementByAmount } from '../redux/counter-slice'
 import { Button } from 'reactstrap';
-import { useGetDepartmentsQuery } from '../api/departments-api-slice';
+import { useLazyGetDepartmentsQuery } from '../api/departments-api-slice';
 
 export default function Counter() {
 
     const count = useSelector((state) => state.counter.value)
     const dispatch = useDispatch()
 
-    const {
-        data,
-        isFetching,
-        isLoading
-    } = useGetDepartmentsQuery();
+
+    // const {
+    //     data,
+    //     isFetching,
+    //     isLoading
+    // } = useGetDepartmentsQuery();
+
+    const [getDepartments, {data: departments, isFetching}] = useLazyGetDepartmentsQuery();
 
 
+    const fetch = () => {
+        getDepartments();
+    }
 
     return (
         <div>
             <div>
 
                 <div>
-                    {JSON.stringify(data)} {isFetching ? '...refetching' : ''}
+                    {JSON.stringify(departments)} {isFetching ? '...refetching' : ''}
                 </div>
 
                 <Button color="danger">Danger!</Button>
@@ -44,6 +50,12 @@ export default function Counter() {
                     onClick={() => dispatch(incrementByAmount(33))}
                 >
                     Increase 33
+                </button>
+
+                <button
+                    onClick={() => fetch()}
+                >
+                    FETCH
                 </button>
             </div>
         </div>

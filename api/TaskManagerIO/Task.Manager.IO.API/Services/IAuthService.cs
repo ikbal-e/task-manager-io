@@ -10,6 +10,6 @@ public interface IAuthService
     Task<OneOf<LoginResponseDto, NotFoundError>> LoginAsync(LoginParameters loginParameters);
     Task RegisterAsync(RegisterParameters registerParameters);
     Task<OneOf<LoginResponseDto, NotFoundError>> RefreshTokenAsync(string refreshToken, string expiredAccessToken);
-
+    Task<OneOf<OperationSucceeded, NotFoundError>> ChangePassword(int userId, string oldPassword, string newPassword);
 }
 

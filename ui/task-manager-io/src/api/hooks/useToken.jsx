@@ -11,12 +11,14 @@ export default function useToken() {
 
     useEffect(() => {
         const token = localStorage.getItem('token');
+        const refreshToken = localStorage.getItem('refreshToken');
+        const expiresAt= localStorage.getItem('expiresAt');
         if (!!token) {
-            dispatch(setCredentials({ user: "asd", accessToken: token }));
+            dispatch(setCredentials({ user: "asd", accessToken: token, refreshToken: refreshToken, expiresAt: expiresAt })); //TODO:
         }
         setToken(token);
         setLoading(false);
-        
+
     }, [dispatch]);
 
 

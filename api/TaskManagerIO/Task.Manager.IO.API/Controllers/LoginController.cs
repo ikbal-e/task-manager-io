@@ -34,9 +34,10 @@ public class LoginController : ControllerBase
                 notFoundError => Problem(notFoundError.Message, HttpContext.Request.Path, 404, "title")
             );
 
+    
     [AllowAnonymous]
     [HttpPost("Refresh")]
-    public async Task<ActionResult<LoginResponseDto>> Refresh([FromBody] string refreshToken)
+    public async Task<ActionResult<LoginResponseDto>> Refresh([FromBody] RefreshTokenRequestDto refreshToken)
     {
         HttpContext.Request.Headers.TryGetValue(HeaderNames.Authorization, out var accessToken);
         accessToken = accessToken.FirstOrDefault()?.Replace("Bearer ", string.Empty);
@@ -45,7 +46,7 @@ public class LoginController : ControllerBase
             return NotFound();
         }
 
-        return (await _authService.RefreshTokenAsync(refreshToken, accessToken))
+        return (await _authService.RefreshTokenAsync(refreshToken.RefreshToken, accessToken))
                     .Match<ActionResult<LoginResponseDto>>(
                         loginResponseDto => Ok(loginResponseDto),
                         notFoundError => Problem(notFoundError.Message, HttpContext.Request.Path, 404, "title")

@@ -5,40 +5,44 @@ import './App.css';
 import Counter from './components/counter';
 import Layout from './components/layout';
 import Login from './components/login';
+import LoginPage from './pages/login.page';
+import MainPage from './pages/main.page';
+import ProfilePage from './pages/profile.page';
 import { PrivateOutlet } from './private-outlet';
 
 function App() {
 
   const { token, setToken } = useToken();
 
-  if(token.loading) {
+  if (token.loading) {
     //TODO: spinner?
     return;
   }
 
   return (
     <>
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Layout />}>
-          {/* <Route index element={<Public />} /> */}
-          <Route path="login" element={<Login />} />
-
-          <Route element={<PrivateOutlet />}>
-            <Route path="counter" element={<Counter />} />
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<PrivateOutlet />}>
+            <Route path="/" element={<Layout />}>
+              <Route index element={<MainPage />} />
+              <Route path="counter" element={<Counter />} />
+              <Route path="profile" element={<ProfilePage />} />
+            </Route>
           </Route>
-
-        </Route>
-      </Routes>
-      {/* <Routes>
+          <Route path="/login" element={<Layout />}>
+            <Route index element={<LoginPage />} />
+          </Route>
+        </Routes>
+        {/* <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="*" element={<PrivateOutlet />}>
           <Route index element={<Counter />} />
           <Route path="counter" element={<Counter />} />
         </Route>
       </Routes> */}
-    </BrowserRouter>
-  </>
+      </BrowserRouter>
+    </>
   )
 }
 

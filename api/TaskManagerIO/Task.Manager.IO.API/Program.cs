@@ -93,6 +93,7 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IJobService, JobService>();
 builder.Services.AddScoped<IDepartmentService, DepartmentService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IProfileService, ProfileService>();
 
 var app = builder.Build();
 

@@ -9,9 +9,24 @@ export const authApiSlice = apiSlice.injectEndpoints({
                 body: { ...credentials }
             })
         }),
+        getCurrentUserProfile: builder.query({
+            query: () => '/api/profiles/me',
+            //keepUnusedDataFor: 10,
+            providesTags: ['User']
+        }),
+        changePassword: builder.mutation({
+            query: body => ({
+                url: '/api/profiles/me/changePassword',
+                method: 'PUT',
+                body: {...body}
+            }),
+            providesTags: ['User']
+        })
     })
 })
 
 export const {
-    useLoginMutation
+    useLoginMutation,
+    useGetCurrentUserProfileQuery,
+    useChangePasswordMutation
 } = authApiSlice

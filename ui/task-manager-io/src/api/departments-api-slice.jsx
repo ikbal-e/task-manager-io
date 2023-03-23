@@ -12,5 +12,5 @@ export const departmentsApiSlice = apiSlice.injectEndpoints({
 })
 
 export const {
-    useGetDepartmentsQuery
+    useLazyGetDepartmentsQuery
 } = departmentsApiSlice
