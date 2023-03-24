@@ -21,6 +21,17 @@ export const authApiSlice = apiSlice.injectEndpoints({
                 body: {...body}
             }),
             providesTags: ['User']
+        }),
+        registerUser: builder.mutation({
+            query: body => ({
+                url: 'api/register',
+                method: 'POST',
+                body: {...body}
+            })
+        }),
+        getUserProfiles: builder.query({
+            query: () => '/api/profiles',
+            providesTags: ['User']
         })
     })
 })
@@ -28,5 +39,7 @@ export const authApiSlice = apiSlice.injectEndpoints({
 export const {
     useLoginMutation,
     useGetCurrentUserProfileQuery,
-    useChangePasswordMutation
+    useChangePasswordMutation,
+    useGetUserProfilesQuery,
+    useRegisterUserMutation,
 } = authApiSlice

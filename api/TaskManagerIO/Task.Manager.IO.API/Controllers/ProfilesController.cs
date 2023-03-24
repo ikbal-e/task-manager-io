@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Data;
 using System.Security.Claims;
 using TaskManagerIO.API.DTOs;
 using TaskManagerIO.API.Services;
@@ -16,6 +18,16 @@ public class ProfilesController : ControllerBase
     {
         _profileService = profileService;
         _authService = authService;
+    }
+
+    [Authorize(Roles = "admin")]
+    [HttpGet("")]
+    public async Task<ActionResult<IEnumerable<ProfileInfoDto>>> GetProfiles()
+    {
+        var profiles = await _profileService.GetProfilesAsync();
+        
+        return Ok(profiles);
+
     }
 
     [HttpGet("Me", Name = nameof(GetMyProfile))]

@@ -13,8 +13,9 @@ export default function useToken() {
         const token = localStorage.getItem('token');
         const refreshToken = localStorage.getItem('refreshToken');
         const expiresAt= localStorage.getItem('expiresAt');
+        const role = localStorage.getItem('role');
         if (!!token) {
-            dispatch(setCredentials({ user: "asd", accessToken: token, refreshToken: refreshToken, expiresAt: expiresAt })); //TODO:
+            dispatch(setCredentials({ user: "asd", accessToken: token, refreshToken: refreshToken, expiresAt: expiresAt, role: role })); //TODO:
         }
         setToken(token);
         setLoading(false);

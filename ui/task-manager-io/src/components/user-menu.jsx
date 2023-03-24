@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { NavLink as RRNavLink } from 'react-router-dom';
 import {
@@ -17,10 +17,11 @@ import {
     NavbarText,
     Button,
 } from 'reactstrap';
-import { logOut } from '../redux/auth-slice';
+import { logOut, selectUserIsAdmin } from '../redux/auth-slice';
 
 const UserMenu = (args) => {
     const [isOpen, setIsOpen] = useState(false);
+    const isAdmin = useSelector(selectUserIsAdmin);
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -49,6 +50,16 @@ const UserMenu = (args) => {
                         <NavItem>
                             <NavLink tag={RRNavLink} to="/counter">Counter</NavLink>
                         </NavItem>
+                        {isAdmin &&
+                            <>
+                                <NavItem>
+                                    <NavLink tag={RRNavLink} to="/users">Users</NavLink>
+                                </NavItem>
+                                <NavItem>
+                                    <NavLink tag={RRNavLink} to="/departments">Departments</NavLink>
+                                </NavItem>
+                            </>
+                        }
                         <NavItem className="ms-auto">
                             <Button color='primary' onClick={() => handleLogout()}>Logout</Button>
                         </NavItem>

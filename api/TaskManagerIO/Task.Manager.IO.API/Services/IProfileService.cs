@@ -7,4 +7,5 @@ namespace TaskManagerIO.API.Services;
 public interface IProfileService
 {
     Task<OneOf<ProfileInfoDto, NotFoundError>> GetProfileAsync(int userId);
+    Task<List<ProfileInfoDto>> GetProfilesAsync();
 }

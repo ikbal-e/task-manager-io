@@ -48,7 +48,8 @@ public class AuthService : IAuthService
             AccessToken = accessToken,
             RefreshToken = refreshToken,
             Username = user.Username,
-            ExpiresAt = expiresAt
+            ExpiresAt = expiresAt,
+            Role = user.UserRole
         };
     }
 
@@ -65,14 +66,19 @@ public class AuthService : IAuthService
                 new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
                 new Claim(JwtRegisteredClaimNames.Email, user.Username),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(ClaimTypes.Role,"admin"), // TODO: do not hardcode
-                new Claim(ClaimTypes.Role,"user"),
+                new Claim(ClaimTypes.Role,"user"), // TODO: do not hardcode
              }),
             Expires = DateTime.UtcNow.AddMinutes(45),
             Issuer = issuer,
             Audience = audience,
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha512Signature)
         };
+
+        if (user.UserRole == ValueObjects.UserRole.Admin)
+        {
+            tokenDescriptor.Subject.AddClaim(new Claim(ClaimTypes.Role, "admin"));
+        }
+
         var tokenHandler = new JwtSecurityTokenHandler();
         var token = tokenHandler.CreateToken(tokenDescriptor);
         var accessToken = tokenHandler.WriteToken(token);
@@ -96,7 +102,11 @@ public class AuthService : IAuthService
         {
             Username = registerParameters.Username,
             Salt = saltBase64,
-            Password = hashedPassword
+            Password = hashedPassword,
+            Name = registerParameters.Username,
+            Lastname = registerParameters.Lastname,
+            DepartmentId = registerParameters.DepartmentId,
+            UserRole = registerParameters.UserRole ?? ValueObjects.UserRole.User,
         };
 
         _context.Users.Add(user);
@@ -148,7 +158,8 @@ public class AuthService : IAuthService
             AccessToken = accessToken,
             RefreshToken = newRefreshToken,
             Username = user.Username,
-            ExpiresAt = expiresAt
+            ExpiresAt = expiresAt,
+            Role = user.UserRole
         };
     }
 

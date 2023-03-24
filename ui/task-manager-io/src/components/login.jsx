@@ -26,6 +26,7 @@ const Login = () => {
             localStorage.setItem('token', userData.accessToken);
             localStorage.setItem('refreshToken', userData.refreshToken);
             localStorage.setItem('expiresAt', userData.expiresAt);
+            localStorage.setItem('role', userData.role)
             setUser('');
             setPassword('');
             navigate('/counter');

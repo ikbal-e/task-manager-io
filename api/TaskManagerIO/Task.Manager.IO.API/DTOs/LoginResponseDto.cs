@@ -1,4 +1,6 @@
-﻿namespace TaskManagerIO.API.DTOs;
+﻿using TaskManagerIO.API.ValueObjects;
+
+namespace TaskManagerIO.API.DTOs;
 
 public class LoginResponseDto
 {
@@ -6,5 +8,6 @@ public class LoginResponseDto
     public string AccessToken { get; set; }
     public DateTime ExpiresAt { get; set; }
     public string RefreshToken { get; set; }
+    public UserRole? Role { get; set; }
 }
 

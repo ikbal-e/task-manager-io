@@ -26,6 +26,7 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
             localStorage.setItem('token', refreshResult.accessToken);
             localStorage.setItem('refreshToken', refreshResult.refreshToken);
             localStorage.setItem('expiresAt', refreshResult.expiresAt);
+            localStorage.setItem('role', refreshResult.role);
 
             result = await baseQuery(args, api, extraOptions);
         } else {
@@ -33,6 +34,7 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
             localStorage.clear('token');
             localStorage.clear('refreshToken');
             localStorage.clear('expiresAt');
+            localStorage.clear('role');
             window.location.href = "/login";
         }
     }

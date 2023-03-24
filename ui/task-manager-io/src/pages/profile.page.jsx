@@ -3,9 +3,9 @@ import Profile from '../components/profile';
 
 const ProfilePage = () => {
     return (
-        <>
+        <div style={{ margin: '5vh'}}>
             <Profile />
-        </>
+        </div>
     )
 }
 
